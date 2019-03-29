@@ -2,27 +2,37 @@ import React, { Component, Fragment } from "react";
 import { Col, Row } from "react-grid-system";
 import styled from "styled-components";
 import color from "../shared/colors";
+import { fetchData, fetchPrice } from "../shared/api";
 
 import Search from "../components/Search";
 
 class AddPage extends Component {
   state = { query: "", data: [], no_match: false, preview: {} };
 
-  getData = async () => {
-    const { query } = this.state;
-    const API_KEY = "DMXBSXODLRZLAMU3";
+  setStateAsync(state) {
+    return new Promise(resolve => {
+      this.setState(state, resolve);
+    });
+  }
 
-    await fetch(
-      `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${API_KEY}`
-    )
-      .then(response => response.json())
-      .then(
-        result =>
-          result.bestMatches.length > 0
-            ? this.setState({ data: result.bestMatches })
-            : this.setState({ data: [], no_match: true })
-      )
-      .catch(err => console.log(err));
+  getData = async keywords => {
+    const result = await fetchData(keywords);
+
+    if (result.bestMatches.length > 0) {
+      await this.setStateAsync({
+        data: result.bestMatches
+      });
+    } else {
+      await this.setStateAsync({
+        data: [],
+        no_match: true
+      });
+    }
+  };
+
+  getPrice = async symbol => {
+    const result = await fetchPrice(symbol);
+    console.log(result["Global Quote"]);
   };
 
   onChange = e => this.setState({ query: e.target.value, no_match: false });
@@ -31,7 +41,12 @@ class AddPage extends Component {
     const { query } = this.state;
 
     e.preventDefault();
-    if (query) return this.getData();
+    if (query) return this.getData(query);
+  };
+
+  onPreview = entry => {
+    this.getPrice(entry["1. symbol"]);
+    this.setState({ preview: entry });
   };
 
   render() {
@@ -51,7 +66,7 @@ class AddPage extends Component {
             {data.map(entry => (
               <Bar
                 key={entry["1. symbol"]}
-                onClick={() => this.setState({ preview: entry })}
+                onClick={() => this.onPreview(entry)}
               >
                 <p>{entry["1. symbol"]}</p>
                 <p>{entry["2. name"]}</p>
@@ -63,6 +78,10 @@ class AddPage extends Component {
             <Panel>
               <p>{preview["1. symbol"]}</p>
               <p>{preview["2. name"]}</p>
+              <p>{preview["5. marketOpen"]}</p>
+              <p>{preview["6. marketClose"]}</p>
+              <p>{preview["05. price"]}</p>
+              <p>{preview["09. change"]}</p>
             </Panel>
           </Col>
         </Row>
