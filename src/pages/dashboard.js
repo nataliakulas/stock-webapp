@@ -47,6 +47,7 @@ const Panel = styled.div`
 
   background-color: ${color.cream};
   border-radius: 4px;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.25);
 `;
 
 const LinkButton = styled(Link)`

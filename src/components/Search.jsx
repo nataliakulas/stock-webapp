@@ -6,7 +6,7 @@ import color from "../shared/colors";
 import { ButtonMixin } from "../shared/mixins";
 
 const Search = ({ value, onChange, onSubmit }) => (
-  <form onSubmit={onSubmit}>
+  <Form onSubmit={onSubmit}>
     <Row>
       <Col xs={4}>
         <Input
@@ -22,10 +22,14 @@ const Search = ({ value, onChange, onSubmit }) => (
         <Button type="submit">Search</Button>
       </Col>
     </Row>
-  </form>
+  </Form>
 );
 
 export default Search;
+
+const Form = styled.form`
+  margin-bottom: 20px;
+`;
 
 const Input = styled.input`
   width: 100%;
