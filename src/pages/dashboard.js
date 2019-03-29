@@ -8,18 +8,32 @@ import color from "../shared/colors";
 import { ButtonMixin } from "../shared/mixins";
 
 class DashboardPage extends Component {
+  state = { companies: [] };
+
+  componentDidMount() {
+    let companies = JSON.parse(localStorage.getItem("companies"));
+    this.setState({ companies: companies });
+  }
+
   render() {
+    const { companies } = this.state;
     return (
       <Fragment>
         <H1>Stock exchange</H1>
         <H2>Companies</H2>
         <Row>
-          <Col xs={6} offset={{ xs: 3 }}>
-            <Panel>
-              <H3>It seems, you don't have any companies yet!</H3>
-              <LinkButton to={route.ADD}>Let's add some</LinkButton>
-            </Panel>
-          </Col>
+          <LinkButton to={route.ADD}>Let's add something</LinkButton>
+          {companies ? (
+            companies.map(company => {
+              return <Fragment />;
+            })
+          ) : (
+            <Col xs={6} offset={{ xs: 3 }}>
+              <Panel>
+                <H3>It seems, you don't have any companies yet!</H3>
+              </Panel>
+            </Col>
+          )}
         </Row>
       </Fragment>
     );
