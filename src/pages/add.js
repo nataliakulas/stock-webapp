@@ -6,7 +6,7 @@ import color from "../shared/colors";
 import Search from "../components/Search";
 
 class AddPage extends Component {
-  state = { query: "", data: [], no_match: false };
+  state = { query: "", data: [], no_match: false, preview: {} };
 
   getData = async () => {
     const { query } = this.state;
@@ -35,7 +35,7 @@ class AddPage extends Component {
   };
 
   render() {
-    const { query, data, no_match } = this.state;
+    const { query, data, no_match, preview } = this.state;
 
     return (
       <Fragment>
@@ -49,12 +49,21 @@ class AddPage extends Component {
         <Row>
           <Col xs={6}>
             {data.map(entry => (
-              <Bar key={entry["1. symbol"]}>
+              <Bar
+                key={entry["1. symbol"]}
+                onClick={() => this.setState({ preview: entry })}
+              >
                 <p>{entry["1. symbol"]}</p>
                 <p>{entry["2. name"]}</p>
               </Bar>
             ))}
             {no_match && <Panel>No match!</Panel>}
+          </Col>
+          <Col xs={6}>
+            <Panel>
+              <p>{preview["1. symbol"]}</p>
+              <p>{preview["2. name"]}</p>
+            </Panel>
           </Col>
         </Row>
       </Fragment>
