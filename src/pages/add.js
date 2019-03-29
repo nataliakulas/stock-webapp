@@ -5,6 +5,7 @@ import color from "../shared/colors";
 import { fetchData, fetchOtherData, fetchPrice } from "../shared/api";
 
 import Search from "../components/Search";
+import { ButtonMixin } from "../shared/mixins";
 
 class AddPage extends Component {
   state = {
@@ -15,12 +16,6 @@ class AddPage extends Component {
     website: "",
     logo: ""
   };
-
-  setStateAsync(state) {
-    return new Promise(resolve => {
-      this.setState(state, resolve);
-    });
-  }
 
   getData = async keywords => {
     const result = await fetchData(keywords);
@@ -40,7 +35,7 @@ class AddPage extends Component {
   getPrice = async symbol => {
     const result = await fetchPrice(symbol);
 
-    await this.setState(prevState => ({
+    this.setState(prevState => ({
       preview: { ...prevState.preview, ...result["Global Quote"] }
     }));
   };
@@ -75,6 +70,11 @@ class AddPage extends Component {
 
   onClearInput = () => {
     this.setState({ query: "" });
+  };
+
+  onAdd = () => {
+    const { preview } = this.state;
+    console.log("add", preview["1. symbol"]);
   };
 
   render() {
@@ -144,6 +144,9 @@ class AddPage extends Component {
                     <H3>Price change:</H3>
                     <P>{preview["09. change"]}</P>
                   </Wrapper>
+                  <Button type="button" onClick={() => this.onAdd()}>
+                    Add to my companies
+                  </Button>
                 </Panel>
               )}
           </Col>
@@ -242,4 +245,11 @@ const Bar = styled.div`
   &:hover {
     border-color: ${color.secondary};
   }
+`;
+
+const Button = styled.button`
+  ${ButtonMixin};
+
+  width: 240px;
+  margin: 20px auto;
 `;
