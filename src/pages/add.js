@@ -72,6 +72,7 @@ class AddPage extends Component {
 
     this.setState({
       disabled:
+        companies &&
         companies.filter(company => company === entry["1. symbol"]).length > 0
     });
 
@@ -96,13 +97,8 @@ class AddPage extends Component {
     } else {
       companies = [...companies, preview["1. symbol"]];
     }
+    this.setState({ disabled: true });
     localStorage.setItem("companies", JSON.stringify(companies));
-  };
-
-  checkDisable = () => {
-    const { preview, companies } = this.state;
-    console.log(companies.filter(company => company === preview["1. symbol"]));
-    return companies.filter(company => company === preview["1. symbol"]);
   };
 
   render() {

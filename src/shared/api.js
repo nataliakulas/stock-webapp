@@ -1,4 +1,5 @@
-export const API_KEY = "DMXBSXODLRZLAMU3";
+export const API_KEY =
+  process.env === "production" ? "DMXBSXODLRZLAMU3" : "DMXBSXODLRZLAMU5";
 const url = "https://www.alphavantage.co/query?function=";
 
 export const fetchData = async keywords => {
