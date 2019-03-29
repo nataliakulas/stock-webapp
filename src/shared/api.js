@@ -22,3 +22,14 @@ export const fetchPrice = async symbol => {
     console.log(error);
   }
 };
+
+export const fetchOtherData = async name => {
+  try {
+    let response = await fetch(
+      `https://autocomplete.clearbit.com/v1/companies/suggest?query=${name}`
+    );
+    return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};

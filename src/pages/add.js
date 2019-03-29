@@ -2,12 +2,19 @@ import React, { Component, Fragment } from "react";
 import { Col, Row } from "react-grid-system";
 import styled from "styled-components";
 import color from "../shared/colors";
-import { fetchData, fetchPrice } from "../shared/api";
+import { fetchData, fetchOtherData, fetchPrice } from "../shared/api";
 
 import Search from "../components/Search";
 
 class AddPage extends Component {
-  state = { query: "", data: [], no_match: false, preview: {} };
+  state = {
+    query: "",
+    data: [],
+    no_match: false,
+    preview: {},
+    website: "",
+    logo: ""
+  };
 
   setStateAsync(state) {
     return new Promise(resolve => {
@@ -32,7 +39,10 @@ class AddPage extends Component {
 
   getPrice = async symbol => {
     const result = await fetchPrice(symbol);
-    console.log(result["Global Quote"]);
+
+    await this.setState(prevState => ({
+      preview: { ...prevState.preview, ...result["Global Quote"] }
+    }));
   };
 
   onChange = e => this.setState({ query: e.target.value, no_match: false });
@@ -44,8 +54,22 @@ class AddPage extends Component {
     if (query) return this.getData(query);
   };
 
+  getOtherData = async name => {
+    const result = await fetchOtherData(name);
+
+    if (result.length > 0) {
+      this.setState({ website: result[0].domain, logo: result[0].logo });
+    } else {
+      this.setState({ website: "", logo: "" });
+    }
+  };
+
   onPreview = entry => {
+    const re = /Inc/g;
+    const name = entry["2. name"].replace(re, "").trim();
+
     this.getPrice(entry["1. symbol"]);
+    this.getOtherData(name);
     this.setState({ preview: entry });
   };
 
@@ -54,18 +78,12 @@ class AddPage extends Component {
   };
 
   render() {
-    const { query, data, no_match, preview } = this.state;
+    const { query, data, no_match, preview, logo, website } = this.state;
     console.log(preview);
-    return (
-      <Fragment>
+    return <Fragment>
         <H1>Stock exchange</H1>
         <H2>Add Company</H2>
-        <Search
-          value={query}
-          onChange={e => this.onChange(e)}
-          onSubmit={e => this.onSubmit(e)}
-          onClear={() => this.onClearInput()}
-        />
+        <Search value={query} onChange={e => this.onChange(e)} onSubmit={e => this.onSubmit(e)} onClear={() => this.onClearInput()} />
         <Row>
           <Col xs={6}>
             {data.map(entry => (
@@ -81,9 +99,13 @@ class AddPage extends Component {
             {no_match && <Panel>No match!</Panel>}
           </Col>
           <Col xs={6}>
-            {preview &&
-              preview["1. symbol"] && (
-                <Panel>
+            {preview && preview["1. symbol"] && <Panel>
+                  <Wrapper spaceBetween>
+                    {logo ? <Img src={logo} alt={preview["2. name"]} /> : <Placeholder />}
+                    <A href={website} target="_blank" rel="noopener noreferrer">
+                      {website}
+                    </A>
+                  </Wrapper>
                   <Wrapper>
                     <H3>Symbol:</H3>
                     <P>{preview["1. symbol"]}</P>
@@ -106,12 +128,10 @@ class AddPage extends Component {
                     <H3>Price change:</H3>
                     <P>{preview["09. change"]}</P>
                   </Wrapper>
-                </Panel>
-              )}
+                </Panel>}
           </Col>
         </Row>
-      </Fragment>
-    );
+      </Fragment>;
   }
 }
 
@@ -135,6 +155,24 @@ const P = styled.p`
   margin: 10px;
 `;
 
+const Img = styled.img`
+  width: auto;
+  height: 45px;
+`;
+
+const Placeholder = styled.div`
+  height: 45px;
+`;
+
+const A = styled.a`
+  color: ${color.primary};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration-color: ${color.secondary};
+  }
+`;
+
 const Panel = styled.div`
   width: 100%;
   min-height: 200px;
@@ -155,7 +193,13 @@ const Panel = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
+  justify-content: ${({ spaceBetween }) =>
+    spaceBetween ? "space-between" : "flex-start"};
   align-items: center;
+
+  &:first-of-type {
+    margin-bottom: 20px;
+  }
 `;
 
 const Bar = styled.div`
