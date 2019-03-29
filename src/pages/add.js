@@ -10,6 +10,10 @@ class AddPage extends Component {
     this.setState({ query: e.target.value });
   };
 
+  onSubmit = e => {
+    e.preventDefault();
+  };
+
   render() {
     const { query } = this.state;
 
@@ -17,18 +21,23 @@ class AddPage extends Component {
       <Fragment>
         <H1>Stock exchange</H1>
         <H2>Add Company</H2>
-        <Row>
-          <Col xs={4}>
-            <Input
-              id="search"
-              type="text"
-              name="search"
-              placeholder="Type company symbol"
-              value={query}
-              onChange={e => this.onChange(e)}
-            />
-          </Col>
-        </Row>
+        <form onSubmit={e => this.onSubmit(e)}>
+          <Row>
+            <Col xs={4}>
+              <Input
+                id="search"
+                type="text"
+                name="search"
+                placeholder="Type company symbol"
+                value={query}
+                onChange={e => this.onChange(e)}
+              />
+            </Col>
+            <Col xs={2}>
+              <Button type="submit">Search</Button>
+            </Col>
+          </Row>
+        </form>
       </Fragment>
     );
   }
@@ -55,5 +64,26 @@ const Input = styled.input`
 
   &:focus {
     border-color: ${color.secondary};
+  }
+`;
+
+const Button = styled.button`
+  width: 100%;
+  height: 40px;
+
+  font-family: "Lato", sans-serif;
+  color: ${color.white};
+  font-weight: bold;
+  text-transform: uppercase;
+
+  border: 1px solid ${color.primary};
+  background-color: ${color.primary};
+  border-radius: 4px;
+  padding: 0 20px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: ${color.secondary};
+    background-color: ${color.secondary};
   }
 `;
