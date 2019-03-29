@@ -26,11 +26,11 @@ class AddPage extends Component {
     const result = await fetchData(keywords);
 
     if (result.bestMatches.length > 0) {
-      await this.setStateAsync({
+      this.setState({
         data: result.bestMatches
       });
     } else {
-      await this.setStateAsync({
+      this.setState({
         data: [],
         no_match: true
       });
@@ -79,11 +79,17 @@ class AddPage extends Component {
 
   render() {
     const { query, data, no_match, preview, logo, website } = this.state;
-    console.log(preview);
-    return <Fragment>
+
+    return (
+      <Fragment>
         <H1>Stock exchange</H1>
         <H2>Add Company</H2>
-        <Search value={query} onChange={e => this.onChange(e)} onSubmit={e => this.onSubmit(e)} onClear={() => this.onClearInput()} />
+        <Search
+          value={query}
+          onChange={e => this.onChange(e)}
+          onSubmit={e => this.onSubmit(e)}
+          onClear={() => this.onClearInput()}
+        />
         <Row>
           <Col xs={6}>
             {data.map(entry => (
@@ -99,10 +105,20 @@ class AddPage extends Component {
             {no_match && <Panel>No match!</Panel>}
           </Col>
           <Col xs={6}>
-            {preview && preview["1. symbol"] && <Panel>
+            {preview &&
+              preview["1. symbol"] && (
+                <Panel>
                   <Wrapper spaceBetween>
-                    {logo ? <Img src={logo} alt={preview["2. name"]} /> : <Placeholder />}
-                    <A href={website} target="_blank" rel="noopener noreferrer">
+                    {logo ? (
+                      <Img src={logo} alt={preview["2. name"]} />
+                    ) : (
+                      <Placeholder />
+                    )}
+                    <A
+                      href={`http://${website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {website}
                     </A>
                   </Wrapper>
@@ -128,10 +144,12 @@ class AddPage extends Component {
                     <H3>Price change:</H3>
                     <P>{preview["09. change"]}</P>
                   </Wrapper>
-                </Panel>}
+                </Panel>
+              )}
           </Col>
         </Row>
-      </Fragment>;
+      </Fragment>
+    );
   }
 }
 
