@@ -7,7 +7,7 @@ import * as route from "../shared/routes";
 import color from "../shared/colors";
 import { ButtonMixin } from "../shared/mixins";
 import Details from "../components/Details";
-import { fetchData, fetchPrice } from "../shared/api";
+import { fetchData, fetchOtherData, fetchPrice } from "../shared/api";
 
 class DashboardPage extends Component {
   state = {
@@ -31,6 +31,18 @@ class DashboardPage extends Component {
       this.setState({
         preview: dataResult.bestMatches[0]
       });
+
+      const re = /Inc/g;
+      const name = await dataResult.bestMatches[0]["2. name"]
+        .replace(re, "")
+        .trim();
+
+      const result = await fetchOtherData(name);
+      if (result.length > 0) {
+        this.setState({ website: result[0].domain, logo: result[0].logo });
+      } else {
+        this.setState({ website: "", logo: "" });
+      }
     }
 
     if (priceResult["Global Quote"]) {
@@ -45,7 +57,7 @@ class DashboardPage extends Component {
   };
 
   render() {
-    const { companies, preview } = this.state;
+    const { companies, preview, website, logo } = this.state;
 
     return (
       <Fragment>
@@ -61,7 +73,11 @@ class DashboardPage extends Component {
             {companies ? (
               companies.map(company => {
                 return (
-                  <Bar key={company} onClick={() => this.onPreview(company)}>
+                  <Bar
+                    key={company}
+                    active={company === preview["1. symbol"]}
+                    onClick={() => this.onPreview(company)}
+                  >
                     <p>{company}</p>
                   </Bar>
                 );
@@ -75,11 +91,7 @@ class DashboardPage extends Component {
           <Col xs={6}>
             {preview &&
               preview["1. symbol"] && (
-                <Details
-                  preview={preview}
-                  // logo={logo}
-                  // website={website}
-                />
+                <Details preview={preview} logo={logo} website={website} />
               )}
           </Col>
         </Row>
