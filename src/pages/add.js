@@ -14,8 +14,16 @@ class AddPage extends Component {
     no_match: false,
     preview: {},
     website: "",
-    logo: ""
+    logo: "",
+    disabled: false,
+    companies: []
   };
+
+  componentDidMount() {
+    let companies = JSON.parse(localStorage.getItem("companies"));
+
+    this.setState({ companies: companies });
+  }
 
   getData = async keywords => {
     const result = await fetchData(keywords);
@@ -60,6 +68,13 @@ class AddPage extends Component {
   };
 
   onPreview = entry => {
+    const { companies } = this.state;
+
+    this.setState({
+      disabled:
+        companies.filter(company => company === entry["1. symbol"]).length > 0
+    });
+
     const re = /Inc/g;
     const name = entry["2. name"].replace(re, "").trim();
 
@@ -84,8 +99,22 @@ class AddPage extends Component {
     localStorage.setItem("companies", JSON.stringify(companies));
   };
 
+  checkDisable = () => {
+    const { preview, companies } = this.state;
+    console.log(companies.filter(company => company === preview["1. symbol"]));
+    return companies.filter(company => company === preview["1. symbol"]);
+  };
+
   render() {
-    const { query, data, no_match, preview, logo, website } = this.state;
+    const {
+      query,
+      data,
+      no_match,
+      preview,
+      logo,
+      website,
+      disabled
+    } = this.state;
 
     return (
       <Fragment>
@@ -118,6 +147,7 @@ class AddPage extends Component {
                   preview={preview}
                   logo={logo}
                   website={website}
+                  disabled={disabled}
                   onAdd={() => this.onAdd()}
                 />
               )}

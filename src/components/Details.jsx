@@ -4,7 +4,7 @@ import styled from "styled-components";
 import color from "../shared/colors";
 import { ButtonMixin } from "../shared/mixins";
 
-const Details = ({ preview, logo, website, onAdd }) => (
+const Details = ({ preview, logo, website, onAdd, disabled }) => (
   <Panel>
     <Wrapper spaceBetween>
       {logo ? <Img src={logo} alt={preview["2. name"]} /> : <Placeholder />}
@@ -35,8 +35,8 @@ const Details = ({ preview, logo, website, onAdd }) => (
       <P>{preview["09. change"]}</P>
     </Wrapper>
     {onAdd && (
-      <Button type="button" onClick={onAdd}>
-        Add to my companies
+      <Button type="button" disabled={disabled} onClick={onAdd}>
+        {disabled ? "Already saved!" : "Add to my companies"}
       </Button>
     )}
   </Panel>
@@ -108,4 +108,10 @@ const Button = styled.button`
 
   width: 240px;
   margin: 20px auto;
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: ${color.primary};
+    border-color: ${color.primary};
+  }
 `;
