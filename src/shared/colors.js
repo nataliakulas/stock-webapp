@@ -1,9 +1,8 @@
 const colors = {
   black: "#000E14",
-  blue: "#003049",
-  primary: "#E1CE7A",
+  primary: "#003049",
   secondary: "#F77F00",
-  cream: "#EAE2B7",
+  cream: "#F7F4E4",
   white: "#FFF",
   red: "#D62828"
 };
