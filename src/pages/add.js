@@ -49,6 +49,10 @@ class AddPage extends Component {
     this.setState({ preview: entry });
   };
 
+  onClearInput = () => {
+    this.setState({ query: "" });
+  };
+
   render() {
     const { query, data, no_match, preview } = this.state;
 
@@ -60,6 +64,7 @@ class AddPage extends Component {
           value={query}
           onChange={e => this.onChange(e)}
           onSubmit={e => this.onSubmit(e)}
+          onClear={() => this.onClearInput()}
         />
         <Row>
           <Col xs={6}>
