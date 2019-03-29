@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import * as route from "../shared/routes";
 import color from "../shared/colors";
+import { ButtonMixin } from "../shared/mixins";
 
 class DashboardPage extends Component {
   render() {
@@ -49,19 +50,7 @@ const Panel = styled.div`
 `;
 
 const LinkButton = styled(Link)`
-  color: ${color.white};
-  text-decoration: none;
-  text-transform: uppercase;
-
-  border: 1px solid ${color.primary};
-  border-radius: 2px;
-  background-color: ${color.primary};
+  ${ButtonMixin};
 
   margin: 10px auto;
-  padding: 5px 10px;
-
-  &:hover {
-    border-color: ${color.secondary};
-    background-color: ${color.secondary};
-  }
 `;
