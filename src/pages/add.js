@@ -6,7 +6,7 @@ import color from "../shared/colors";
 import Search from "../components/Search";
 
 class AddPage extends Component {
-  state = { query: "", data: [] };
+  state = { query: "", data: [], no_match: false };
 
   getData = async () => {
     const { query } = this.state;
@@ -16,21 +16,26 @@ class AddPage extends Component {
       `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${API_KEY}`
     )
       .then(response => response.json())
-      .then(result => this.setState({ data: result.bestMatches }))
+      .then(
+        result =>
+          result.bestMatches.length > 0
+            ? this.setState({ data: result.bestMatches })
+            : this.setState({ data: [], no_match: true })
+      )
       .catch(err => console.log(err));
   };
 
-  onChange = e => {
-    this.setState({ query: e.target.value });
-  };
+  onChange = e => this.setState({ query: e.target.value, no_match: false });
 
   onSubmit = e => {
+    const { query } = this.state;
+
     e.preventDefault();
-    this.getData();
+    if (query) return this.getData();
   };
 
   render() {
-    const { query, data } = this.state;
+    const { query, data, no_match } = this.state;
 
     return (
       <Fragment>
@@ -49,6 +54,7 @@ class AddPage extends Component {
                 <p>{entry["2. name"]}</p>
               </Bar>
             ))}
+            {no_match && <Panel>No match!</Panel>}
           </Col>
         </Row>
       </Fragment>
@@ -63,6 +69,20 @@ const H1 = styled.h1`
   text-transform: uppercase;
 `;
 const H2 = styled.h2``;
+
+const Panel = styled.div`
+  width: 100%;
+  min-height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: ${color.cream};
+  border-radius: 4px;
+  box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.25);
+`;
 
 const Bar = styled.div`
   width: 100%;
