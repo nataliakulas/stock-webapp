@@ -55,7 +55,7 @@ class AddPage extends Component {
 
   render() {
     const { query, data, no_match, preview } = this.state;
-
+    console.log(preview);
     return (
       <Fragment>
         <H1>Stock exchange</H1>
@@ -71,6 +71,7 @@ class AddPage extends Component {
             {data.map(entry => (
               <Bar
                 key={entry["1. symbol"]}
+                active={entry["1. symbol"] === preview["1. symbol"]}
                 onClick={() => this.onPreview(entry)}
               >
                 <p>{entry["1. symbol"]}</p>
@@ -80,14 +81,33 @@ class AddPage extends Component {
             {no_match && <Panel>No match!</Panel>}
           </Col>
           <Col xs={6}>
-            <Panel>
-              <p>{preview["1. symbol"]}</p>
-              <p>{preview["2. name"]}</p>
-              <p>{preview["5. marketOpen"]}</p>
-              <p>{preview["6. marketClose"]}</p>
-              <p>{preview["05. price"]}</p>
-              <p>{preview["09. change"]}</p>
-            </Panel>
+            {preview &&
+              preview["1. symbol"] && (
+                <Panel>
+                  <Wrapper>
+                    <H3>Symbol:</H3>
+                    <P>{preview["1. symbol"]}</P>
+                  </Wrapper>
+                  <Wrapper>
+                    <H3>Name:</H3>
+                    <P>{preview["2. name"]}</P>
+                  </Wrapper>
+                  <Wrapper>
+                    <H3>Trading hours:</H3>
+                    <P>{preview["5. marketOpen"]}</P>
+                    {"-"}
+                    <P>{preview["6. marketClose"]}</P>
+                  </Wrapper>
+                  <Wrapper>
+                    <H3>Price:</H3>
+                    <P>{preview["05. price"]}</P>
+                  </Wrapper>
+                  <Wrapper>
+                    <H3>Price change:</H3>
+                    <P>{preview["09. change"]}</P>
+                  </Wrapper>
+                </Panel>
+              )}
           </Col>
         </Row>
       </Fragment>
@@ -103,6 +123,18 @@ const H1 = styled.h1`
 `;
 const H2 = styled.h2``;
 
+const H3 = styled.h3`
+  width: 110px;
+  color: ${color.primary};
+  font-size: 16px;
+  margin: 10px;
+`;
+
+const P = styled.p`
+  font-size: 16px;
+  margin: 10px;
+`;
+
 const Panel = styled.div`
   width: 100%;
   min-height: 200px;
@@ -115,6 +147,15 @@ const Panel = styled.div`
   background-color: ${color.cream};
   border-radius: 4px;
   box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.25);
+
+  margin: 5px 0;
+  padding: 20px;
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
 `;
 
 const Bar = styled.div`
@@ -127,7 +168,7 @@ const Bar = styled.div`
 
   background-color: ${color.cream};
   border-radius: 4px;
-  border: 1px solid ${color.cream};
+  border: 1px solid ${({ active }) => (active ? color.primary : color.cream)};
   box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.25);
 
   padding: 5px 10px;
