@@ -5,7 +5,7 @@ import color from "../shared/colors";
 import { fetchData, fetchOtherData, fetchPrice } from "../shared/api";
 
 import Search from "../components/Search";
-import { ButtonMixin } from "../shared/mixins";
+import Details from "../components/Details";
 
 class AddPage extends Component {
   state = {
@@ -74,8 +74,6 @@ class AddPage extends Component {
 
   onAdd = () => {
     const { preview } = this.state;
-    console.log("add", preview["1. symbol"]);
-
     let companies = JSON.parse(localStorage.getItem("companies"));
 
     if (!companies) {
@@ -84,7 +82,6 @@ class AddPage extends Component {
       companies = [...companies, preview["1. symbol"]];
     }
     localStorage.setItem("companies", JSON.stringify(companies));
-    console.log(companies);
   };
 
   render() {
@@ -117,47 +114,12 @@ class AddPage extends Component {
           <Col xs={6}>
             {preview &&
               preview["1. symbol"] && (
-                <Panel>
-                  <Wrapper spaceBetween>
-                    {logo ? (
-                      <Img src={logo} alt={preview["2. name"]} />
-                    ) : (
-                      <Placeholder />
-                    )}
-                    <A
-                      href={`http://${website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {website}
-                    </A>
-                  </Wrapper>
-                  <Wrapper>
-                    <H3>Symbol:</H3>
-                    <P>{preview["1. symbol"]}</P>
-                  </Wrapper>
-                  <Wrapper>
-                    <H3>Name:</H3>
-                    <P>{preview["2. name"]}</P>
-                  </Wrapper>
-                  <Wrapper>
-                    <H3>Trading hours:</H3>
-                    <P>{preview["5. marketOpen"]}</P>
-                    {"-"}
-                    <P>{preview["6. marketClose"]}</P>
-                  </Wrapper>
-                  <Wrapper>
-                    <H3>Price:</H3>
-                    <P>{preview["05. price"]}</P>
-                  </Wrapper>
-                  <Wrapper>
-                    <H3>Price change:</H3>
-                    <P>{preview["09. change"]}</P>
-                  </Wrapper>
-                  <Button type="button" onClick={() => this.onAdd()}>
-                    Add to my companies
-                  </Button>
-                </Panel>
+                <Details
+                  preview={preview}
+                  logo={logo}
+                  website={website}
+                  onAdd={() => this.onAdd()}
+                />
               )}
           </Col>
         </Row>
@@ -174,36 +136,6 @@ const H1 = styled.h1`
 `;
 const H2 = styled.h2``;
 
-const H3 = styled.h3`
-  width: 110px;
-  color: ${color.primary};
-  font-size: 16px;
-  margin: 10px;
-`;
-
-const P = styled.p`
-  font-size: 16px;
-  margin: 10px;
-`;
-
-const Img = styled.img`
-  width: auto;
-  height: 45px;
-`;
-
-const Placeholder = styled.div`
-  height: 45px;
-`;
-
-const A = styled.a`
-  color: ${color.primary};
-  cursor: pointer;
-
-  &:hover {
-    text-decoration-color: ${color.secondary};
-  }
-`;
-
 const Panel = styled.div`
   width: 100%;
   min-height: 200px;
@@ -219,18 +151,6 @@ const Panel = styled.div`
 
   margin: 5px 0;
   padding: 20px;
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: ${({ spaceBetween }) =>
-    spaceBetween ? "space-between" : "flex-start"};
-  align-items: center;
-
-  &:first-of-type {
-    margin-bottom: 20px;
-  }
 `;
 
 const Bar = styled.div`
@@ -255,11 +175,4 @@ const Bar = styled.div`
   &:hover {
     border-color: ${color.secondary};
   }
-`;
-
-const Button = styled.button`
-  ${ButtonMixin};
-
-  width: 240px;
-  margin: 20px auto;
 `;
