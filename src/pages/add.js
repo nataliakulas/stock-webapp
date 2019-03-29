@@ -75,6 +75,16 @@ class AddPage extends Component {
   onAdd = () => {
     const { preview } = this.state;
     console.log("add", preview["1. symbol"]);
+
+    let companies = JSON.parse(localStorage.getItem("companies"));
+
+    if (!companies) {
+      companies = [preview["1. symbol"]];
+    } else {
+      companies = [...companies, preview["1. symbol"]];
+    }
+    localStorage.setItem("companies", JSON.stringify(companies));
+    console.log(companies);
   };
 
   render() {
